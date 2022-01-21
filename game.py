@@ -52,9 +52,10 @@ class GameRunner:
             player_counter += line.count("o")
         if player_counter != 1:
             raise Warning("There are to many or no players in the game (only one player is allowed)")
-        # Min one possible Movement
+        # Safe current coords and possible moves
         self.player_y, self.player_x = self.player_coords(state)
         self.possible_moves = self.possible_movement(state, self.player_y, self.player_x)
+        # Min one possible Movement
         if len(self.possible_moves) == 0:
             raise Warning("The player can't move (is surrounded by rocks)")
     
@@ -88,12 +89,8 @@ class GameRunner:
         for index, element in enumerate(state):
             state[index] = emp.join(element)
         self.state = state
-
-        # Find new possible Moves:
-        self.player_y, self.player_x = self.player_coords(state)
-        self.possible_moves = self.possible_movement(state, self.player_y, self.player_x)
-
-        return self.state, self.possible_moves
+        # Check if new state is valid
+        self.game_state_checker(state)
 
 
     def runner(self, state):
@@ -104,17 +101,16 @@ class GameRunner:
         direction = input()
         # Interactive While loop
         while direction != "stop":
-            new_state, possible_moves_new = self.move(state, direction)
+            self.move(state, direction)
             print("= New State =")
-            print("\n".join(new_state))
-            print("Possible Moves: {}".format(possible_moves_new))
-            state = new_state
+            print("\n".join(self.state))
+            print("Possible Moves: {}".format(self.possible_moves))
             direction = input()
-            while direction not in possible_moves_new and direction != "stop":
-                print("\n".join(new_state))
-                print(f"This move is not possible, Possible Moves are: {possible_moves_new}")
+            while direction not in self.possible_moves and direction != "stop":
+                print("\n".join(self.state))
+                print(f"This move is not possible, Possible Moves are: {self.possible_moves}")
                 direction = input()
-                
+            
                 
                 
 if __name__ == '__main__':
@@ -124,4 +120,7 @@ if __name__ == '__main__':
     "#   o ##",
     "   #####"
     ]
-    pass
+    
+    game = GameRunner(s1)
+    game.runner(s1)
+    
