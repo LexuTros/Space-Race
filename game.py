@@ -1,3 +1,6 @@
+import os
+
+
 class GameRunner:
     
     def __init__(self, state):
@@ -12,16 +15,16 @@ class GameRunner:
                     return y, x # =(player_y, player_x) coordinates
 
     def possible_movement(self, state, player_y, player_x):
-        res = ()
+        res = []
         if 0 <= player_y + 1 < len(state):
-            if state[player_y + 1][player_x] == " ": res += ("down",)
+            if state[player_y + 1][player_x] == " ": res.append("down")
         if 0 <= player_x - 1 < len(state[player_y]):
-            if state[player_y][player_x - 1] == " ": res += ("left",)
+            if state[player_y][player_x - 1] == " ": res.append("left")
         if 0 <= player_x + 1 < len(state[player_y]):
-            if state[player_y][player_x + 1] == " ": res += ("right",)
+            if state[player_y][player_x + 1] == " ": res.append("right")
         if 0 <= player_y - 1 < len(state):
-            if state[player_y - 1][player_x] == " ": res += ("up",)
-        return res # =Tuple of possible movement directions in alphabetic order
+            if state[player_y - 1][player_x] == " ": res.append("up")
+        return res # =List of possible movement directions in alphabetic order
 
 
     def game_state_checker(self, state):
@@ -92,25 +95,37 @@ class GameRunner:
         # Check if new state is valid
         self.game_state_checker(state)
 
+    
+    def print_gamestate(self):
+        pass
+    
 
-    def runner(self, state):
-        y1, x1 = self.player_coords(state)
+    def run(self):
         # First output
-        print("\n".join(state))
-        print("Possible Moves: " + str(self.possible_movement(state, y1, x1)))
+        print()
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("= New State =")
+        print("\n".join(self.state))
+        print(f"Possible Moves: {self.possible_moves}")
         direction = input()
         # Interactive While loop
         while direction != "stop":
-            self.move(state, direction)
+            self.move(self.state, direction)
+            print()
+            os.system('cls' if os.name == 'nt' else 'clear')
             print("= New State =")
             print("\n".join(self.state))
             print("Possible Moves: {}".format(self.possible_moves))
             direction = input()
+
             while direction not in self.possible_moves and direction != "stop":
+                print()
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print("= New State =")
                 print("\n".join(self.state))
                 print(f"This move is not possible, Possible Moves are: {self.possible_moves}")
                 direction = input()
-            
+    
                 
                 
 if __name__ == '__main__':
@@ -122,5 +137,4 @@ if __name__ == '__main__':
     ]
     
     game = GameRunner(s1)
-    game.runner(s1)
-    
+    game.run()
